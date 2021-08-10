@@ -28,10 +28,10 @@
         <version>7.2.0.GA-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>helloworld-html5</artifactId>
+    <artifactId>helloworld-pkg</artifactId>
     <packaging>war</packaging>
-    <name>Quickstart: helloworld-html5</name>
-    <description>A project that demonstrates Hello World using HTML5 and REST</description>
+    <name>Example Hello-World-Pkg</name>
+    <description>A Dummy Deployment Package for ADEBA</description>
 
     <licenses>
         <license>
@@ -42,27 +42,17 @@
     </licenses>
 
     <dependencies>
-
-        <!-- Import the CDI API, we use provided scope as the API is included in JBoss EAP -->
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.jboss.eap.quickstarts</groupId>
+            <artifactId>helloworld</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
         </dependency>
-
-        <!-- Import the Common Annotations API (JSR-250), we use provided
-            scope as the API is included in JBoss EAP -->
         <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the JAX-RS API, we use provided scope as the API is included in JBoss EAP. -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
-            <scope>provided</scope>
+            <groupId>org.jboss.eap.quickstarts</groupId>
+            <artifactId>helloworld-html5</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
         </dependency>
     </dependencies>
 
