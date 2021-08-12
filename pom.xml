@@ -98,16 +98,9 @@
         </dependencies>
     </dependencyManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.github.git-commit-id</groupId>
-            <artifactId>git-commit-id-maven-plugin</artifactId>
-        </dependency>
-    </dependencies>
-
     <build>
         <!-- Set the name of the WAR, used as the context root when the app is deployed. -->
-        <finalName>${project.artifactId}</finalName>
+        <finalName>${project.artifactId}-${project.version}-${buildNumber}</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
