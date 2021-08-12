@@ -26,8 +26,7 @@ public class HelloServiceTest {
 
     @Test
     public void testFailing() {
-
-        //TODO: implement proper test
+        fail("");
     }
 
 }

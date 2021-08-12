@@ -53,7 +53,7 @@ pipeline {
             steps {
                 gitlabCommitStatus(name: 'Build') {
                     configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                        sh 'mvn -s $MAVEN_SETTINGS_XML clean -DskipTests=true'
+                        sh 'mvn -s $MAVEN_SETTINGS_XML clean install -DskipTests=true'
                     }
                 }
             }
@@ -61,12 +61,11 @@ pipeline {
 
         stage('Test') {
             steps {
-                gitlabCommitStatus(name: 'Build') {
+                gitlabCommitStatus(name: 'Test') {
                     script {
-                        try {
-                            // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
+                        try {// man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
                             configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML clean -DskipTests=false'
+                                sh 'mvn -s $MAVEN_SETTINGS_XML install -DskipTests=false'
                             }
                         } catch (exc) {
                             currentBuild.result = 'UNSTABLE'
