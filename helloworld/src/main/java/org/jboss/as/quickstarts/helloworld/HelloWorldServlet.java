@@ -31,9 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * A simple servlet taking advantage of features added in 3.0.
  * </p>
  *
- * <p>
- * The servlet is registered and mapped to /HelloServlet using the {@linkplain WebServlet
- * </p>
+
  *
  * @author Pete Muir
  *
