@@ -21,7 +21,7 @@
 
 
     <groupId>at.sozvers.svd</groupId>
-    <artifactId>quickstart-parent</artifactId>
+    <artifactId>helloworld-parent</artifactId>
     <version>7.2.0.GA-SNAPSHOT</version>
 
     <packaging>pom</packaging>

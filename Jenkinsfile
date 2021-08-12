@@ -1,3 +1,5 @@
+#!groovy
+
 properties([
         gitLabConnection('Demo-Gitlab-Connection'),
         pipelineTriggers([
@@ -31,14 +33,18 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: ['Build & Unit-Test'])
+        gitlabBuilds(builds: [
+                ['Build'],
+                ['Test'],
+                ['Deploy']
+        ])
     }
 
     stages {
-        stage("initialization"){
+        stage("initialization") {
             steps {
                 script {
-                    currentBuild.description=sh(
+                    currentBuild.description = sh(
                             script: 'git show --name-only',
                             returnStdout: true
                     ).trim()
@@ -46,33 +52,52 @@ pipeline {
             }
         }
 
-        stage('Build & Unit-Test'){
+        stage('Build') {
             steps {
-                gitlabCommitStatus(name: 'Build & Unit-Test') {
-                    configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML clean install'
+                gitlabCommitStatus(name: 'Build') {
+                    script {
+                        try { // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
+                            configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                                sh 'mvn -s $MAVEN_SETTINGS_XML clean -DskipTests=true'
                             }
-
+                        }catch(exc) {
+                            currentBuild.result='USNTABLE'
+                        }
+                    }
                 }
             }
-//           post {
-//               always {
-//                   script {
-//                       junit "**/surefire-reports/*.xml"
-//                   }
-//             }
-//            }
         }
 
-        stage('Deploy to Nexus'){
+        stage('Test') {
             steps {
                 configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
-                            }
+                    sh 'mvn -s $MAVEN_SETTINGS_XML install -DskipTests=false'
+                }
+            }
+            post {
+                always {
+                    script {
+                        junit "**/surefire-reports/*.xml"
+                    }
+                }
             }
         }
+
+        stage('Deploy to Nexus') {
+            when { branch 'master' }
+            steps {
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                            sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                        }
+                    }
+                }
+            }
+
+        }
     }
-     post {
+    post {
         failure {
             script {
                 emailext(
@@ -93,8 +118,7 @@ pipeline {
         }
         always {
             script {
-//                cleanWs()
-                  echo 'cleanWS deaktiviert'
+                cleanWs()
             }
         }
     }
