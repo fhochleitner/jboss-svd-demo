@@ -58,6 +58,7 @@
         <sonar.sources>src/main/</sonar.sources>
         <plugin.sonar.version>3.7.0.1746</plugin.sonar.version>
         <sonar.jacoco.reportPaths>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.junit.reportPaths>
             ${project.build.directory}/surefire-reports/
         </sonar.junit.reportPaths>
@@ -263,12 +264,21 @@
                         <version>${plugin.jacoco.version}</version>
                         <executions>
                             <execution>
-                                <id>pre-unit-test</id>
+                                <id>prepare-agent</id>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
                                 <configuration>
                                     <destFile>${project.build.directory}/jacoco.exec</destFile>
+                                    <append>true</append>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                                <configuration>
                                     <append>true</append>
                                 </configuration>
                             </execution>
