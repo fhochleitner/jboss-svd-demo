@@ -6,7 +6,7 @@ properties([
                         $class                        : 'GitLabPushTrigger',
                         branchFilterType              : 'All',
                         triggerOnPush                 : true,
-                        triggerOnMergeRequest         : false,
+                        triggerOnMergeRequest         : true,
                         triggerOpenMergeRequestOnPush : "never",
                         triggerOnNoteRequest          : true,
                         noteRegex                     : "rebuild",
