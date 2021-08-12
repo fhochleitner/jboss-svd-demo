@@ -20,7 +20,7 @@
     <parent>
         <artifactId>helloworld-parent</artifactId>
         <groupId>at.sozvers.svd</groupId>
-        <version>7.2.2.GA-SNAPSHOT</version>
+        <version>7.2.2.GA</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>helloworld</artifactId>

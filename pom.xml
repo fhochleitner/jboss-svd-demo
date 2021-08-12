@@ -20,7 +20,7 @@
 
     <groupId>at.sozvers.svd</groupId>
     <artifactId>helloworld-parent</artifactId>
-    <version>7.2.2.GA-SNAPSHOT</version>
+    <version>7.2.2.GA</version>
 
     <packaging>pom</packaging>
 
@@ -38,7 +38,7 @@
     <scm>
         <connection>scm:git:http://gitlab.example.com/svd/devops-demo.git</connection>
         <developerConnection>scm:git:http://gitlab.example.com/svd/devops-demo.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>helloworld-parent-7.2.2.GA</tag>
   </scm>
 
     <distributionManagement>
