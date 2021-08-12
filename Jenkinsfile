@@ -86,15 +86,13 @@ pipeline {
         stage('Deploy to Nexus') {
             when { branch 'main' }
             steps {
-                gitlabBuilds(builds: ['Deploy']) {
-                    script {
-                        if (currentBuild.result == null) {
-                            configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML deploy -DskipTests'
-                            }
-                        } else {
-                            echo "There are test failures. Not deploying new build to nexus"
+                script {
+                    if (currentBuild.result == null) {
+                        configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                            sh 'mvn -s $MAVEN_SETTINGS_XML deploy -DskipTests'
                         }
+                    } else {
+                        echo "There are test failures. Not deploying new build to nexus"
                     }
                 }
             }
