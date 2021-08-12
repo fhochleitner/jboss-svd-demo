@@ -1,0 +1,52 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+
+    <id>pkg</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/main/config</directory>
+            <outputDirectory>config</outputDirectory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+            <filtered>true</filtered>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/deployments</directory>
+            <outputDirectory>deployments</outputDirectory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>src/main</directory>
+            <includes>
+                <include>package_descriptor.json</include>
+            </includes>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/flyway-install</directory>
+            <outputDirectory>flyway-install</outputDirectory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+            <filtered>true</filtered>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>deployments</outputDirectory>
+            <fileMode>644</fileMode>
+            <directoryMode>755</directoryMode>
+            <includes>
+                <include>${project.groupId}:helloworld</include>
+                <include>${project.groupId}:helloworld-html5</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+</assembly>

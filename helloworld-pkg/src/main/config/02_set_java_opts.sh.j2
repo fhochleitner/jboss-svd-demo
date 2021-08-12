@@ -1,0 +1,1 @@
+echo "JAVA_OPTS=\"\$JAVA_OPTS -Xms{{ XMS | default("512m") }} -Xmx{{ XMX | default("512m") }} -XX:MaxMetaspaceSize={{ JAVA_META_SPACE|default("512m") }} -Xss1m  -XX:+FlightRecorder  -XX:+UseG1GC -XX:MaxGCPauseMillis=250 {{ JAVA_OPTS|default("") }} {{ ENV_JVM_RIVERBED|default("") }} \"" >> $JBOSS_HOME/bin/standalone.conf

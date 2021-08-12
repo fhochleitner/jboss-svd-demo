@@ -1,0 +1,72 @@
+#!/bin/bash
+
+echo "Starte Installation" `date`
+
+if [ -f "./environment" ]; then
+    ENV_CONFIG=./environment
+fi
+
+if [ -z "$ENV_CONFIG" ]; then
+	ENV_CONFIG=$1
+fi
+
+
+if [ ! -f "$ENV_CONFIG" ]; then
+    echo "Environment $ENV_CONFIG doesn't exist! Set ENV_CONFIG or use argument" 1>&2
+    exit 1
+fi
+
+
+. $ENV_CONFIG
+
+ENV_SUFF=""
+
+if [ -n "$FEATURES" ]; then
+	for feature in $FEATURES; do
+		ENV_SUFF="$ENV_SUFF .${feature}"
+	done
+fi
+
+###########################
+# Remove file parts defined in FEATURES
+###########################
+handle_features() {
+
+	dir=.
+    if [ -z "$ENV_SUFF" ]; then
+        echo "No features defined in FEATURES"
+        return
+    fi
+    echo "Active features: $ENV_SUFF"
+    for file in $dir/*; do
+        target_file=$file
+        for feature in $ENV_SUFF; do
+            target_file=`echo $target_file | sed -e "s/$feature//"`
+        done
+        if [ "$file" != "$target_file" ]; then
+            echo "Feature copy $file to $target_file"
+            cp $file $target_file || exit 1
+        fi
+    done
+}
+
+###########################
+# generate conf-file with deployments
+###########################
+generate_deploy() {
+	echo Create File $DEPLOY_CONF
+	echo "# This file is generated" > $DEPLOY_CONF
+	
+	# muss immer als erstes deployed werden.
+	echo deploy ../deployments/activemq-rar* >> $DEPLOY_CONF
+	
+	for f in `ls ../deployments/* | grep lava`; do
+		echo deploy $f >> $DEPLOY_CONF
+	done
+}
+
+
+DEPLOY_CONF=08_generated_deploy.conf
+generate_deploy || exit 1
+
+handle_features || exit 2
