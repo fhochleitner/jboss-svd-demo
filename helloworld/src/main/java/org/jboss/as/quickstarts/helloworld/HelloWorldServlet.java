@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <p>
  * The servlet is registered and mapped to /HelloServlet using the {@linkplain WebServlet
- * @HttpServlet}. The {@link HelloService} is injected by CDI.
  * </p>
  *
  * @author Pete Muir
