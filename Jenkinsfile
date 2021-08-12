@@ -32,7 +32,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: ['Build', 'Test'])
+        gitlabBuilds(builds: ['Build', 'Test', 'Sonar'])
     }
 
     stages {
@@ -66,8 +66,6 @@ pipeline {
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
-
-
             }
             post {
                 always {
@@ -79,13 +77,27 @@ pipeline {
         }
 
         stage('Deploy to Nexus') {
-            when { branch 'main' }
+            options {
+                gitlabBuilds(builds: ['Deploy'])
+            }
+            when {
+                beforeOptions true
+                allOf {
+                    branch 'main'
+                    expression {
+                        currentBuild.result == null
+                    }
+                }
+            }
             steps {
-                script {
-                    if (currentBuild.result == null) {
-                        sh 'mvn deploy -DskipTests'
-                    } else {
-                        echo "skipping nexus deploy because of test failures"
+                sh 'mvn deploy -DskipTests'
+            }
+        }
+        stage('Sonar analyse') {
+            steps {
+                gitlabCommitStatus(name: 'Sonar') {
+                    withSonarQubeEnv('Demo-Sonar-Server') {
+                        sh 'mvn sonar:sonar '
                     }
                 }
             }
