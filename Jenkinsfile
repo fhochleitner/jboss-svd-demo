@@ -57,9 +57,17 @@ pipeline {
 
         stage('Test') {
             steps {
-                gitlabCommitStatus(name: 'Test') {
-                    sh 'mvn test -DskipTests=false'
+                script {
+                    try {
+                        gitlabCommitStatus(name: 'Test') {
+                            sh 'mvn test -DskipTests=false'
+                        }
+                    } catch (exc) {
+                        currentBuild.result = 'UNSTABLE'
+                    }
                 }
+
+
             }
             post {
                 always {
@@ -73,14 +81,19 @@ pipeline {
         stage('Deploy to Nexus') {
             when { branch 'main' }
             steps {
-                sh 'mvn deploy -DskipTests'
+                script {
+                    if (currentBuild.result == null) {
+                        sh 'mvn deploy -DskipTests'
+                    } else {
+                        echo "skipping nexus deploy because of test failures"
+                    }
+                }
             }
         }
     }
     post {
         unsuccessful {
             script {
-                gitlabCommitStatus("ERROR")
                 echo "sending mail because there are test failures"
 //                emailext(
 //                        body: "Please go to ${env.BUILD_URL}/console for more details.",
