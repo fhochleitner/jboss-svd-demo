@@ -26,9 +26,8 @@
 
     <packaging>pom</packaging>
 
-    <name>Quickstart: Parent</name>
-    <description>Quickstart's parent</description>
-    <url>http://www.jboss.org/jdf/quickstarts/get-started/</url>
+    <name>devops-demo</name>
+    <description>devops-demo</description>
 
     <licenses>
         <license>
