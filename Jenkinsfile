@@ -1,5 +1,6 @@
 #!groovy
 
+
 properties([
         gitLabConnection('Demo-Gitlab-Connection'),
         pipelineTriggers([
