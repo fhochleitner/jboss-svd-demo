@@ -32,7 +32,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: ['Build', 'Test'])
+        gitlabBuilds(builds: ['Build', 'Test', 'Deploy', 'Sonar'])
     }
 
     stages {
@@ -66,8 +66,6 @@ pipeline {
                         currentBuild.result = 'UNSTABLE'
                     }
                 }
-
-
             }
             post {
                 always {
@@ -79,7 +77,14 @@ pipeline {
         }
 
         stage('Deploy to Nexus') {
-            when { branch 'main' }
+            when {
+                allOf {
+                    branch 'main'
+                    expression {
+                        currentBuild.result == null
+                    }
+                }
+            }
             steps {
                 script {
                     if (currentBuild.result == null) {
