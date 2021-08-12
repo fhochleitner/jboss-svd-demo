@@ -1,5 +1,5 @@
 properties([
-        gitLabConnection(''),
+        gitLabConnection('Demo-Gitlab-Connection'),
         pipelineTriggers([
                 [
                         $class                        : 'GitLabPushTrigger',
@@ -19,11 +19,7 @@ properties([
 
 pipeline {
     agent {
-        any
-    }
-
-    triggers {
-
+        node 'master'
     }
 
     tools {
@@ -34,7 +30,7 @@ pipeline {
     options {
         disableConcurrentBuilds()
         timestamps()
-        gitLabConnection('')
+        gitLabConnection('Demo-Gitlab-Connection')
         gitlabBuilds(builds: ['Build & Unit-Test'])
     }
 
@@ -53,22 +49,26 @@ pipeline {
         stage('Build & Unit-Test'){
             steps {
                 gitlabCommitStatus(name: 'Build & Unit-Test') {
-                    sleep(20)
-                    echo "todo"
+                    configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                                sh 'mvn -s $MAVEN_SETTINGS_XML clean install'
+                            }
+
                 }
             }
-            post {
-                always {
-                    script {
-                        junit "**/surefire-reports/*.xml"
-                    }
-                }
-            }
+//           post {
+//               always {
+//                   script {
+//                       junit "**/surefire-reports/*.xml"
+//                   }
+//             }
+//            }
         }
 
         stage('Deploy to Nexus'){
             steps {
-                echo "todo"
+                configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                                sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                            }
             }
         }
     }
@@ -93,7 +93,8 @@ pipeline {
         }
         always {
             script {
-                cleanWs()
+//                cleanWs()
+                  echo 'cleanWS deaktiviert'
             }
         }
     }
