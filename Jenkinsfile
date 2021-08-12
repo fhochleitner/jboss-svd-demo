@@ -34,7 +34,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: ['Build','Test','Deploy'])
+        gitlabBuilds(builds: ['Build', 'Test', 'Deploy'])
     }
 
     stages {
@@ -52,14 +52,8 @@ pipeline {
         stage('Build') {
             steps {
                 gitlabCommitStatus(name: 'Build') {
-                    script {
-                        try { // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
-                            configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML clean -DskipTests=true'
-                            }
-                        }catch(exc) {
-                            currentBuild.result='USNTABLE'
-                        }
+                    configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                        sh 'mvn -s $MAVEN_SETTINGS_XML clean -DskipTests=true'
                     }
                 }
             }
@@ -67,8 +61,17 @@ pipeline {
 
         stage('Test') {
             steps {
-                configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh 'mvn -s $MAVEN_SETTINGS_XML install -DskipTests=false'
+                gitlabCommitStatus(name: 'Build') {
+                    script {
+                        try {
+                            // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
+                            configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                                sh 'mvn -s $MAVEN_SETTINGS_XML clean -DskipTests=false'
+                            }
+                        } catch (exc) {
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                    }
                 }
             }
             post {
@@ -81,7 +84,7 @@ pipeline {
         }
 
         stage('Deploy to Nexus') {
-            when { branch 'master' }
+            when { branch 'main' }
             steps {
                 script {
                     if (currentBuild.result == 'SUCCESS') {
