@@ -89,13 +89,10 @@ pipeline {
                 gitlabBuilds(builds: ['Deploy']) {
                     script {
                         if (currentBuild.result == null) {
-                            gitlabCommitStatus(name: 'Deploy') {
                                 configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
                                     sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
                                 }
-                            }
                         } else {
-                            gitlabCommitStatus(name: 'Deploy', state: 'skipped'){
                                 echo "There are test failures. Not deploying new build to nexus"
                             }
                         }
