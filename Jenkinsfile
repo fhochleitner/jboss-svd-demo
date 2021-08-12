@@ -103,11 +103,10 @@ pipeline {
                     timeout(time: 15, unit: 'MINUTES') {
                         // If analysis takes longer than indicated time, then build will be aborted
                         script {
-                            echo "Läut lokal nicht, wahrscheinlich Netzwerkproblem"
-//                            def qualitygate = waitForQualityGate()
-//                            if (qualitygate.status != "OK") {
-//                                error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
-//                            }
+                            def qualitygate = waitForQualityGate()
+                            if (qualitygate.status != "OK") {
+                                error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
+                            }
                         }
                     }
                 }

@@ -37,6 +37,11 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:http://gitlab.example.com/svd/devops-demo.git</connection>
+        <developerConnection>scm:git:http://gitlab.example.com/svd/devops-demo.git</developerConnection>
+    </scm>
+
     <distributionManagement>
         <repository>
             <id>bva-releases</id>
