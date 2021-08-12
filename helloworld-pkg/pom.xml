@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>at.sozvers.svd</groupId>
-        <artifactId>quickstart-parent</artifactId>
+        <artifactId>helloworld-parent</artifactId>
         <!--
         Maintain separation between the artifact id and the version to help prevent
         merge conflicts between commits changing the GA and those changing the V.
