@@ -34,7 +34,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: ['Build', 'Test', 'Deploy'])
+        gitlabBuilds(builds: ['Build', 'Test'])
     }
 
     stages {
@@ -63,7 +63,8 @@ pipeline {
             steps {
                 gitlabCommitStatus(name: 'Test') {
                     script {
-                        try {// man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
+                        try {
+                            // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
                             configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
                                 sh 'mvn -s $MAVEN_SETTINGS_XML install -DskipTests=false'
                             }
@@ -85,37 +86,30 @@ pipeline {
         stage('Deploy to Nexus') {
             when { branch 'main' }
             steps {
-                script {
-                    if (currentBuild.result == 'SUCCESS') {
-                        configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                            sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                gitlabBuilds(builds: ['Deploy']) {
+                    gitlabCommitStatus(name: 'Deploy') {
+                        script {
+                            if (currentBuild.result == null) {
+                                configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                                    sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                                }
+                            } else {
+                                echo "There are test failures. Not deploying new build to nexus"
+                            }
                         }
-                    } else {
-                        echo "There are test failures. Not deploying new build to nexus"
                     }
                 }
             }
-
         }
     }
     post {
-        failure {
+        unsuccessful {
             script {
                 echo "sending mail because there are test failures"
 //                emailext(
 //                        body: "Please go to ${env.BUILD_URL}/console for more details.",
 //                        to: emailextrecipients([developers(), requestor()]),
 //                        subject: "Compile-Pipeline Status is ${currentBuild.result}. ${env.BUILD_URL}"
-//                )
-            }
-        }
-        unstable {
-            script {
-                echo "sending mail because there are test failures"
-//                emailext(
-//                        body: "Please go to ${env.BUILD_URL}/console for more details.",
-//                        to: emailextrecipients([developers(), requestor()]),
-//                        subject: "Compile-Pipeline Build Status is ${currentBuild.result}. ${env.BUILD_URL}"
 //                )
             }
         }

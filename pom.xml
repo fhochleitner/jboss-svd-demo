@@ -40,12 +40,10 @@
 
     <distributionManagement>
         <repository>
-            <id>maven-releases</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+            <id>bva-releases</id>
         </repository>
         <snapshotRepository>
-            <id>maven-snapshots</id>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
+            <id>bva-snapshots</id>
         </snapshotRepository>
     </distributionManagement>
 
