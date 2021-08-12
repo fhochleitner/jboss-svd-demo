@@ -32,7 +32,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: ['Build', 'Test', 'Deploy', 'Sonar'])
+        gitlabBuilds(builds: ['Build', 'Test', 'Sonar'])
     }
 
     stages {
@@ -50,7 +50,7 @@ pipeline {
         stage('Build') {
             steps {
                 gitlabCommitStatus(name: 'Build') {
-                    sh 'mvn clean install -DskipTests=true'
+                    sh 'mvn -B clean install -DskipTests=true -Pjacoco'
                 }
             }
         }
@@ -60,7 +60,7 @@ pipeline {
                 script {
                     try {
                         gitlabCommitStatus(name: 'Test') {
-                            sh 'mvn test -DskipTests=false'
+                            sh 'mvn -B test -DskipTests=false -Pjacoco'
                         }
                     } catch (exc) {
                         currentBuild.result = 'UNSTABLE'
@@ -77,7 +77,11 @@ pipeline {
         }
 
         stage('Deploy to Nexus') {
+            options {
+                gitlabBuilds(builds: ['Deploy'])
+            }
             when {
+                beforeOptions true
                 allOf {
                     branch 'main'
                     expression {
@@ -86,11 +90,25 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    if (currentBuild.result == null) {
-                        sh 'mvn deploy -DskipTests'
-                    } else {
-                        echo "skipping nexus deploy because of test failures"
+                sh 'mvn -B deploy -DskipTests'
+            }
+        }
+        stage('Sonar analyse') {
+            steps {
+                gitlabCommitStatus(name: 'Sonar') {
+                    withSonarQubeEnv('demoSonarQubeServer') {
+                        sh 'mvn -B jacoco:report -Pjacoco'
+                        sh 'mvn -B sonar:sonar'
+                    }
+                    timeout(time: 15, unit: 'MINUTES') {
+                        // If analysis takes longer than indicated time, then build will be aborted
+                        script {
+                            echo "Läut lokal nicht, wahrscheinlich Netzwerkproblem"
+//                            def qualitygate = waitForQualityGate()
+//                            if (qualitygate.status != "OK") {
+//                                error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"
+//                            }
+                        }
                     }
                 }
             }
