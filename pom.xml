@@ -41,9 +41,11 @@
     <distributionManagement>
         <repository>
             <id>bva-releases</id>
+            <url>http://172.18.0.3:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>bva-snapshots</id>
+            <url>http://172.18.0.3:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
