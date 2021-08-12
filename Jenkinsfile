@@ -33,11 +33,7 @@ pipeline {
         disableConcurrentBuilds()
         timestamps()
         gitLabConnection('Demo-Gitlab-Connection')
-        gitlabBuilds(builds: [
-                ['Build'],
-                ['Test'],
-                ['Deploy']
-        ])
+        gitlabBuilds(builds: ['Build','Test','Deploy'])
     }
 
     stages {
@@ -100,20 +96,22 @@ pipeline {
     post {
         failure {
             script {
-                emailext(
-                        body: "Please go to ${env.BUILD_URL}/console for more details.",
-                        to: emailextrecipients([developers(), requestor()]),
-                        subject: "Compile-Pipeline Status is ${currentBuild.result}. ${env.BUILD_URL}"
-                )
+                echo "sending mail because there are test failures"
+//                emailext(
+//                        body: "Please go to ${env.BUILD_URL}/console for more details.",
+//                        to: emailextrecipients([developers(), requestor()]),
+//                        subject: "Compile-Pipeline Status is ${currentBuild.result}. ${env.BUILD_URL}"
+//                )
             }
         }
         unstable {
             script {
-                emailext(
-                        body: "Please go to ${env.BUILD_URL}/console for more details.",
-                        to: emailextrecipients([developers(), requestor()]),
-                        subject: "Compile-Pipeline Build Status is ${currentBuild.result}. ${env.BUILD_URL}"
-                )
+                echo "sending mail because there are test failures"
+//                emailext(
+//                        body: "Please go to ${env.BUILD_URL}/console for more details.",
+//                        to: emailextrecipients([developers(), requestor()]),
+//                        subject: "Compile-Pipeline Build Status is ${currentBuild.result}. ${env.BUILD_URL}"
+//                )
             }
         }
         always {
