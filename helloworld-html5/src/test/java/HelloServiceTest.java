@@ -20,7 +20,7 @@ public class HelloServiceTest {
 
     @Test
     public void testCorrect() {
-
+        helloService.createHelloMessage("test");
         assertTrue(true);
     }
 
