@@ -50,7 +50,7 @@ pipeline {
         stage('Build') {
             steps {
                 gitlabCommitStatus(name: 'Build') {
-                    sh 'mvn clean install -DskipTests=true'
+                    sh 'mvn -B clean install -DskipTests=true -Pjacoco'
                 }
             }
         }
@@ -60,7 +60,7 @@ pipeline {
                 script {
                     try {
                         gitlabCommitStatus(name: 'Test') {
-                            sh 'mvn test -DskipTests=false -Pjacoco'
+                            sh 'mvn -B test -DskipTests=false -Pjacoco'
                         }
                     } catch (exc) {
                         currentBuild.result = 'UNSTABLE'
@@ -90,14 +90,14 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn deploy -DskipTests'
+                sh 'mvn -B deploy -DskipTests'
             }
         }
         stage('Sonar analyse') {
             steps {
                 gitlabCommitStatus(name: 'Sonar') {
                     withSonarQubeEnv('demoSonarQubeServer') {
-                        sh 'mvn sonar:sonar'
+                        sh 'mvn -B sonar:sonar'
                     }
                 }
             }
