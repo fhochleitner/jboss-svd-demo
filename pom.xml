@@ -52,14 +52,16 @@
     <properties>
         <!--    Sonar Konfiguration    -->
         <sonar.projectKey>svd_devops-demo_AXs7hZd5V1Fl8Jp5SoIt</sonar.projectKey>
+        <sonar.login>e0f82f27347a68bc65389fd48ea5e42e0c7483d6</sonar.login>
         <sonar.language>java</sonar.language>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.sources>src/main/</sonar.sources>
         <plugin.sonar.version>3.7.0.1746</plugin.sonar.version>
         <sonar.jacoco.reportPaths>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.junit.reportPaths>
-            ${project.build.directory}/surefire-reports/,${project.build.directory}/failsafe-reports/
+            ${project.build.directory}/surefire-reports/
         </sonar.junit.reportPaths>
+        <sonar.coverage.exclusions>**/helloworld-pkg/**</sonar.coverage.exclusions>
         <plugin.jacoco.version>0.8.5</plugin.jacoco.version>
 
         <maven.compiler.source>11</maven.compiler.source>

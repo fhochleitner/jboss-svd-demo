@@ -96,7 +96,7 @@ pipeline {
         stage('Sonar analyse') {
             steps {
                 gitlabCommitStatus(name: 'Sonar') {
-                    withSonarQubeEnv('Demo-Sonar-Server') {
+                    withSonarQubeEnv('demoSonarQubeServer') {
                         sh 'mvn sonar:sonar '
                     }
                 }
