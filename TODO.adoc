@@ -1,3 +1,0 @@
-* helloworld-pkg Konfiguration einrichten, damit ein gültiges und Deploybares pkg herauspurzelt.
-
-* Jenkinsfile Grundstruktur bereitstellen
