@@ -1,6 +1,4 @@
 #!groovy
-
-
 properties([
         gitLabConnection('Demo-Gitlab-Connection'),
         pipelineTriggers([
@@ -52,9 +50,7 @@ pipeline {
         stage('Build') {
             steps {
                 gitlabCommitStatus(name: 'Build') {
-                    configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                        sh 'mvn -s $MAVEN_SETTINGS_XML clean install -DskipTests=true'
-                    }
+                    sh 'mvn clean install -DskipTests=true'
                 }
             }
         }
@@ -62,16 +58,7 @@ pipeline {
         stage('Test') {
             steps {
                 gitlabCommitStatus(name: 'Test') {
-                    script {
-                        try {
-                            // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
-                            configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML test -DskipTests=false'
-                            }
-                        } catch (exc) {
-                            currentBuild.result = 'UNSTABLE'
-                        }
-                    }
+                    sh 'mvn test -DskipTests=false'
                 }
             }
             post {
@@ -86,21 +73,14 @@ pipeline {
         stage('Deploy to Nexus') {
             when { branch 'main' }
             steps {
-                script {
-                    if (currentBuild.result == null) {
-                        configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                            sh 'mvn -s $MAVEN_SETTINGS_XML deploy -DskipTests'
-                        }
-                    } else {
-                        echo "There are test failures. Not deploying new build to nexus"
-                    }
-                }
+                sh 'mvn deploy -DskipTests'
             }
         }
     }
     post {
         unsuccessful {
             script {
+                gitlabCommitStatus("ERROR")
                 echo "sending mail because there are test failures"
 //                emailext(
 //                        body: "Please go to ${env.BUILD_URL}/console for more details.",
