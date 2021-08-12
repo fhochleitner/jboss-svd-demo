@@ -63,8 +63,7 @@ pipeline {
             steps {
                 gitlabCommitStatus(name: 'Test') {
                     script {
-                        try {
-// man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
+                        try {// man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
                             configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
                                 sh 'mvn -s $MAVEN_SETTINGS_XML install -DskipTests=false'
                             }
@@ -84,16 +83,20 @@ pipeline {
         }
 
         stage('Deploy to Nexus') {
-            when { branch 'main' && expression { return currentBuild.result == 'SUCCESS' } }
+            when { branch 'main' }
             steps {
                 script {
-                    configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                        sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                    if (currentBuild.result == 'SUCCESS') {
+                        configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
+                            sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                        }
+                    } else {
+                        echo "There are test failures. Not deploying new build to nexus"
                     }
                 }
             }
-        }
 
+        }
     }
     post {
         failure {
