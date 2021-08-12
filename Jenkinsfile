@@ -60,7 +60,7 @@ pipeline {
                 script {
                     try {
                         gitlabCommitStatus(name: 'Test') {
-                            sh 'mvn test -DskipTests=false'
+                            sh 'mvn test -DskipTests=false -Pjacoco'
                         }
                     } catch (exc) {
                         currentBuild.result = 'UNSTABLE'
@@ -97,7 +97,7 @@ pipeline {
             steps {
                 gitlabCommitStatus(name: 'Sonar') {
                     withSonarQubeEnv('demoSonarQubeServer') {
-                        sh 'mvn sonar:sonar '
+                        sh 'mvn sonar:sonar'
                     }
                 }
             }
