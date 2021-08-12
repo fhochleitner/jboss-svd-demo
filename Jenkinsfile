@@ -90,7 +90,9 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn -B deploy -DskipTests'
+                gitlabCommitStatus(name: 'Deploy'){
+                    sh 'mvn -B deploy -DskipTests'
+                }
             }
         }
         stage('Sonar analyse') {
