@@ -62,7 +62,13 @@
         <sonar.junit.reportPaths>
             ${project.build.directory}/surefire-reports/
         </sonar.junit.reportPaths>
-        <sonar.coverage.exclusions>**/helloworld-pkg/**</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>
+            **/helloworld-pkg/**,
+            **/test/**
+        </sonar.coverage.exclusions>
+        <sonar.exclusions>
+            **/test/**
+        </sonar.exclusions>
         <plugin.jacoco.version>0.8.5</plugin.jacoco.version>
 
         <maven.compiler.source>11</maven.compiler.source>
