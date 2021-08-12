@@ -66,7 +66,7 @@ pipeline {
                         try {
                             // man kann auch die Settings für die Multi-Branch Pipeline für die gesamte Pipeline hinterlegen, dann sollte man den configFileProvider nicht mehr benötigen.
                             configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML install -DskipTests=false'
+                                sh 'mvn -s $MAVEN_SETTINGS_XML test -DskipTests=false'
                             }
                         } catch (exc) {
                             currentBuild.result = 'UNSTABLE'
@@ -90,7 +90,7 @@ pipeline {
                     script {
                         if (currentBuild.result == null) {
                             configFileProvider([configFile(fileId: 'Maven-Settings', variable: 'MAVEN_SETTINGS_XML')]) {
-                                sh 'mvn -s $MAVEN_SETTINGS_XML deploy'
+                                sh 'mvn -s $MAVEN_SETTINGS_XML deploy -DskipTests'
                             }
                         } else {
                             echo "There are test failures. Not deploying new build to nexus"
