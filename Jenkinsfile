@@ -121,7 +121,7 @@ pipeline {
                 echo "sending mail because there are test failures"
 //                emailext(
 //                        body: "Please go to ${env.BUILD_URL}/console for more details.",
-//                        to: emailextrecipients([developers(), requestor()]),
+//                        to: emailextrecipients([developers()]),
 //                        subject: "Compile-Pipeline Status is ${currentBuild.result}. ${env.BUILD_URL}"
 //                )
             }
